@@ -52,13 +52,20 @@ public class ExcelController {
         }
     }
 
+    private final DataFormatter dataFormatter = new DataFormatter();
+
     private Object getCellValue(Cell cell){
         if (cell == null) return null;
         return switch (cell.getCellType()){
-            case STRING -> cell.getStringCellValue();
-            case NUMERIC -> cell.getNumericCellValue();
-            case BOOLEAN -> cell.getBooleanCellValue();
-            default -> null;
+            case STRING:
+                yield cell.getStringCellValue();
+            case NUMERIC, FORMULA:
+                yield  dataFormatter.formatCellValue(cell);
+            case BOOLEAN:
+                yield  cell.getBooleanCellValue();
+            default:
+                yield  null;
         };
     }
 }
+
